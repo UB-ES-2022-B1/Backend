@@ -1,4 +1,4 @@
-"""Backend URL Configuration
+"""Testing URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -12,13 +12,18 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-
-Small change
-
 """
 from django.contrib import admin
 from django.urls import path
 
+from clients import views
+from clients.views import RegistrationView, LoginView, LogoutView,ChangePasswordView
+from rest_framework_simplejwt import views as jwt_views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('accounts/register', RegistrationView.as_view(), name='register'),
+    path('accounts/login', LoginView.as_view(), name='register'),
+    path('accounts/logout', LogoutView.as_view(), name='register'),
+    path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
+    path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
