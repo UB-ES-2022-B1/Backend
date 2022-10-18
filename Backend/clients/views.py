@@ -19,8 +19,8 @@ class RegistrationView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': True, 'msg': 'Register Success'}, status=status.HTTP_201_CREATED)
+        return Response({'success': False, 'msg': 'User already exist!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(APIView):
@@ -34,15 +34,15 @@ class LoginView(APIView):
             if user is not None:
                 login(request, user)
                 auth_data = get_tokens_for_user(request.user)
-                return Response({'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
+                return Response({'success':True,'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
         except ValueError as e:
-            return Response({'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'success':False,'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):
     def post(self, request):
         logout(request)
-        return Response({'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+        return Response({'success':True,'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):
