@@ -9,18 +9,16 @@ class ClientBackend(ModelBackend):
         email = kwargs['email']
         password = kwargs['password']
         try:
+
             client = Client.objects.get(email=email)
-            if client.failedLoginAttemps > 5:
+            if client.failedLoginAttemps < 5:
                 if client.check_password(password) is True:
-                    if client.failedLoginAttemps >= 0 and client.failedLoginAttemps < 5:
+                    if client.failedLoginAttemps > 0 and client.failedLoginAttemps < 5:
                         client.reset_failed_logins()
-                    return client.user
+                    return client
                 else:
-                    if client.failedLoginAttemps < 5:
-                        client.increment_failed_login()
-                        print(client.failedLoginAttemps)
-                        client.save()
-                        raise ValueError('Wrong password')
+                    client.increment_failed_login()
+                    raise ValueError('Wrong password')
             else:
                 raise ValueError('Block user')
 

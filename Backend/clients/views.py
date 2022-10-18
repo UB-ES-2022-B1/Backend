@@ -29,13 +29,14 @@ class LoginView(APIView):
             return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
         email = request.data['email']
         password = request.data['password']
-        print(email,password)
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            auth_data = get_tokens_for_user(request.user)
-            return Response({'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
-        return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                auth_data = get_tokens_for_user(request.user)
+                return Response({'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):

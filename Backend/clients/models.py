@@ -37,6 +37,9 @@ class Client(AbstractBaseUser):
 
     def increment_failed_login(self):
         self.failedLoginAttemps += 1
+        self.save()
 
     def reset_failed_logins(self):
         self.failedLoginAttemps = 0
+        self.save()
+
