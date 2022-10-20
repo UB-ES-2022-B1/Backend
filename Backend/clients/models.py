@@ -43,3 +43,14 @@ class Client(AbstractBaseUser):
         self.failedLoginAttemps = 0
         self.save()
 
+    def toString(self):
+        return self.email + ' ' + self.name + self.surname + ' ' + self.phone + ' ' + self.country + ' ' + str(self.birthdate)
+
+    def toJson(self):
+        json = {'name': self.name,
+        'surname': self.surname,
+        'email': self.email,
+        'phone': self.phone,
+        'country': self.country,
+        'birthdate': str(self.birthdate)}
+        return json

@@ -8,7 +8,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from clients.utils import get_tokens_for_user
+from .utils import get_tokens_for_user
+
+from .models import Client
 from .serializers import RegistrationSerializer, PasswordChangeSerializer
 
 
@@ -54,3 +56,12 @@ class ChangePasswordView(APIView):
         request.user.set_password(serializer.validated_data['new_password'])
         request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class GetProfileView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request):
+        if request.user.is_authenticated and request.data['email'] == request.user.email:
+            client = Client.objects.get(email=request.data['email'])
+            return Response({'success':True,'msg': str(client.toJson())}, status=status.HTTP_200_OK)
+        return Response({'success':False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
