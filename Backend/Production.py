@@ -18,6 +18,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -30,10 +32,12 @@ hostname = os.environ['DBHOST']
 # username (not @sever-name).
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ['DBNAME'],
         'HOST': hostname + ".postgres.database.azure.com",
         'USER': os.environ['DBUSER'],
-        'PASSWORD': os.environ['DBPASS']
+        'PASSWORD': os.environ['DBPASS'],
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'require'}
     }
 }
