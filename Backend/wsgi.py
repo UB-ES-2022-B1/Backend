@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Backend.settings')
 
-settings_module = 'Backend.production' if 'WEBSITE_HOSTNAME' in os.environ else 'Backend.settings'
+settings_module = 'Backend.Production' if 'WEBSITE_HOSTNAME' in os.environ else 'Backend.settings'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
 application = get_wsgi_application()
