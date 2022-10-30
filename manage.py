@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Backend.settings')
 
     # Only for Local Development - Load environment variables from the .env file
     if not 'WEBSITE_HOSTNAME' in os.environ:

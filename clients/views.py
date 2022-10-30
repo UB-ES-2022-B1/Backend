@@ -1,13 +1,9 @@
-from django.shortcuts import render
-
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from clients.utils import get_tokens_for_user
 from .serializers import RegistrationSerializer, PasswordChangeSerializer
 
@@ -42,7 +38,7 @@ class LoginView(APIView):
 class LogoutView(APIView):
     def post(self, request):
         logout(request)
-        return Response({'success':True,'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+        return Response({'success':True, 'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):
