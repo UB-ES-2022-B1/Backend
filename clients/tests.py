@@ -5,7 +5,7 @@ from django.urls import reverse,path,include
 from rest_framework import status
 from rest_framework.test import APITestCase,URLPatternsTestCase
 from django.test import Client as cl
-from clients.models import Client
+from .models import Client
 
 class ClientTests(APITestCase):
 
