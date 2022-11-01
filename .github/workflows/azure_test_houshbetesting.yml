@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'houshbetesting'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F33E8BA2C6244636865A8F4AE068D5D7 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2147294E2B24B2CABCE61DFBA0EC7A3 }}
