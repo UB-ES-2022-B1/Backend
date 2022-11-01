@@ -43,3 +43,4 @@ class HouseImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseImage
         fields = ('pk', 'image', 'house_id')
+
