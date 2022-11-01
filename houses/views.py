@@ -15,7 +15,6 @@ from .models import House
 
 # Create your views here.
 class CreateHouseView(APIView):
-    permission_classes = [IsAuthenticated, ]
 
     def post(self, request):
         serializer = HouseSerializer(data=request.data)
