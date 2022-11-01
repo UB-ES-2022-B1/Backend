@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from clients import views
-from clients.views import RegistrationView, LoginView, LogoutView,ChangePasswordView
+from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/logout', LogoutView.as_view(), name='register'),
     path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
     path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
 ]
