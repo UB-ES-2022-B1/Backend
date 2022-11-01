@@ -136,16 +136,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-DEFAULT_FILE_STORAGE = 'Backend.custom_azure.AzureMediaStorage'
-STATICFILES_STORAGE = 'Backend.custom_azure.AzureStaticStorage'
+#DEFAULT_FILE_STORAGE = 'Backend.custom_azure.AzureMediaStorage'
+#STATICFILES_STORAGE = 'Backend.custom_azure.AzureStaticStorage'
 
-STATIC_LOCATION = "static"
-MEDIA_LOCATION = "media"
+#STATIC_LOCATION = "static"
+#MEDIA_LOCATION = "media"
 
-AZURE_ACCOUNT_NAME = "houshstorage"
-AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+#AZURE_ACCOUNT_NAME = "houshstorage"
+#AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+#STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+#MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
 
 
 
