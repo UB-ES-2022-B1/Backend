@@ -28,6 +28,9 @@ class VivendaTest(APITestCase):
                        "country": "Argentina",
                        "birthdate": "1987-06-12"}
 
+        data_login = {"email": "mailfalso1@yahoo.com",
+                      "password": "ASD1235"}
+
         data_house = {
             "title": "casa1",
             "owner_id": "mailfalso1@yahoo.com",
@@ -61,6 +64,7 @@ class VivendaTest(APITestCase):
 
         }
         self.client.post('http://localhost:8000/accounts/register', data_client, format='json')
+        self.client.post('http://localhost:8000/accounts/login', data_login, format='json')
 
         response = self.client.post('http://localhost:8000/houses/register', data_house, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
