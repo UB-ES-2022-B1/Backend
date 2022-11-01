@@ -30,5 +30,6 @@ urlpatterns = [
     path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
+    path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
 
 ]

@@ -45,6 +45,40 @@ class House(models.Model):
     smoke_detector = models.BooleanField()
     health_kit = models.BooleanField()
 
+    def toJson(self):
+        json = {"blocked": self.blocked,
+                "title": self.title,
+                "owner": self.owner,
+                "description": self.description,
+                "location": self.location,
+                "id_house": self.id_house,
+                "base_price": self.base_price,
+                "extra_costs": self.extra_costs,
+                "taxes": self.taxes,
+                "num_hab": self.num_hab,
+                "num_beds": self.num_beds,
+                "num_bathrooms": self.num_bathrooms,
+                "num_people": self.num_people,
+                "company_individual": self.company_individual,
+                "kitchen": self.kitchen,
+                "swiming_pool": self.swiming_pool,
+                "garden": self.garden,
+                "billar_table": self.billar_table,
+                "gym": self.gym,
+                "TV": self.TV,
+                "WIFII": self.WIFII,
+                "dishwasher": self.dishwasher,
+                "washing_machine": self.washing_machine,
+                "air_conditioning": self.air_conditioning,
+                "free_parking": self.free_parking,
+                "spacious": self.spacious,
+                "central": self.central,
+                "quite": self.quite,
+                "alarm": self.alarm,
+                "smoke_detector": self.smoke_detector,
+                "health_kit": self.health_kit}
+        return json
+
 
 class HouseImage(models.Model):
     house = models.ForeignKey(House, related_name="image", on_delete=models.CASCADE)
