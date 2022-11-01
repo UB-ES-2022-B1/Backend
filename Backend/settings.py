@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-**eqvf^%n1f98mjd2k%2y+(8*4@lr6u$anff3nc^71468renax
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','houshdb.postgres.database.azure.com','houshbe.azurewebsites.net']
+ALLOWED_HOSTS = ['127.0.0.1','houshdb.postgres.database.azure.com','houshbetesting.azurewebsites.net']
 
 import datetime
 # Application definition
