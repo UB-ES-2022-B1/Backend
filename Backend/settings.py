@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Housh.apps.HoushConfig',
     'rest_framework',
     'clients',
+    'houses',
 
 ]
 
