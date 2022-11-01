@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.template.context_processors import csrf
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -35,7 +36,7 @@ class LoginView(APIView):
             if user is not None:
                 login(request, user)
                 auth_data = get_tokens_for_user(request.user)
-                return Response({'success':True,'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
+                return Response({'success':True,'msg': 'Login Success','token':str(csrf(request)['csrf_token'])}, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({'success':False,'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
