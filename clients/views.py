@@ -63,7 +63,8 @@ class ChangePasswordView(APIView):
 class GetProfileView(APIView):
 
     def post(self, request):
-        if request.data['email'] == request.user.email:
+        try:
             client = Client.objects.get(email=request.data['email'])
             return Response({'success': True, 'msg': client.toJson()}, status=status.HTTP_200_OK)
-        return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
