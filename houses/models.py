@@ -5,6 +5,7 @@ from django.db import models
 
 # Create your models here.
 from clients.models import Client
+import uuid
 
 
 class House(models.Model):
@@ -46,6 +47,10 @@ class House(models.Model):
     health_kit = models.BooleanField()
 
 
+def scramble_uploaded_filename(instance, filename):
+    extension = filename.split(".")[-1]
+    return "{}.{}".format(uuid.uuid4(), extension)
+
 class HouseImage(models.Model):
-    house = models.ForeignKey(House, related_name="image", on_delete=models.CASCADE)
-    image = models.ImageField("Uploaded image")
+    house = models.ForeignKey(House, related_name="house_id", on_delete=models.CASCADE)
+    image = models.ImageField("Uploaded image",upload_to=scramble_uploaded_filename)

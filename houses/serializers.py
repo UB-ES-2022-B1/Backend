@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import House
+from .models import House, HouseImage
 from clients.models import Client
 
 
@@ -37,3 +37,9 @@ class HouseSerializer(serializers.ModelSerializer):
         house.id_house = house.id
         house.save()
         return house
+
+
+class HouseImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HouseImage
+        fields = ('pk', 'image', 'house_id')

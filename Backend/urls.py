@@ -31,5 +31,5 @@ urlpatterns = [
     path('accounts/change-password', ChangePasswordView.as_view(), name='change_password'),
     path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
-    path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house')+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-]
+    path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
+] + static(settings.DEFAULT_FILE_STORAGE, document_root=settings.MEDIA_URL)
