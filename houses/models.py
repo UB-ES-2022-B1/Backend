@@ -48,6 +48,4 @@ class House(models.Model):
 
 class HouseImage(models.Model):
     house = models.ForeignKey(House, related_name="image", on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    url = models.CharField(max_length=200)
-    extension = models.CharField(max_length=10)
+    image = models.ImageField("Uploaded image")
