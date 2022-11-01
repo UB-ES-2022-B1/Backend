@@ -33,15 +33,15 @@ class LoginView(APIView):
             if user is not None:
                 login(request, user)
                 auth_data = get_tokens_for_user(request.user)
-                return Response({'success':True,'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
+                return Response({'success': True, 'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
         except ValueError as e:
-            return Response({'success':False,'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'success': False, 'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):
     def post(self, request):
         logout(request)
-        return Response({'success':True, 'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+        return Response({'success': True, 'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):
@@ -54,11 +54,12 @@ class ChangePasswordView(APIView):
         request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class GetProfileView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request):
         if request.user.is_authenticated and request.data['email'] == request.user.email:
             client = Client.objects.get(email=request.data['email'])
-            return Response({'success':True,'msg': str(client.toJson())}, status=status.HTTP_200_OK)
-        return Response({'success':False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'success': True, 'msg': client.toJson()}, status=status.HTTP_200_OK)
+        return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
