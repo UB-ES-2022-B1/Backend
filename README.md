@@ -8,3 +8,4 @@ django-cors-headers
 pyodbc
 mssql-django
 djangorestframework-simplejwt
+
