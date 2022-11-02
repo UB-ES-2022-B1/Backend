@@ -19,8 +19,8 @@ class CreateHouseView(APIView):
     def post(self, request):
         serializer = HouseSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({'success': True, 'msg': 'Creation Success'}, status=status.HTTP_201_CREATED)
+            house = serializer.save()
+            return Response({'success': True, 'msg': 'Creation Success','id_house':house.id_house}, status=status.HTTP_201_CREATED)
         return Response({'success': False, 'msg': 'House already exist!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
