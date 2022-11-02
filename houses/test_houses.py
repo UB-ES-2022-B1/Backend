@@ -33,7 +33,7 @@ class VivendaTest(APITestCase):
 
         data_house = {
             "title": "casa1",
-            "owner_id": "mailfalso1@yahoo.com",
+            "owner": "mailfalso1@yahoo.com",
             "description": "bonica",
             "location": "Tarragona",
             "base_price": "100",
