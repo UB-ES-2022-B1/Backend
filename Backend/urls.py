@@ -21,6 +21,8 @@ from clients import views
 from clients.views import RegistrationView, LoginView, LogoutView,ChangePasswordView, GetProfileView
 from rest_framework_simplejwt import views as jwt_views
 from houses.views import CreateHouseView
+from django.conf.urls.static import static
+from Backend import settings
 
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
@@ -31,5 +33,4 @@ urlpatterns = [
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
-
 ]

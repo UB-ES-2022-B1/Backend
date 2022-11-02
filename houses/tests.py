@@ -66,3 +66,4 @@ class VivendaTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(House.objects.count(), 1)
         self.assertEqual(House.objects.get(owner_id='mailfalso1@yahoo.com').title, 'casa1')
+
