@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Backend.settings')
 
     # Only for Local Development - Load environment variables from the .env file
     if not 'WEBSITE_HOSTNAME' in os.environ:
@@ -27,7 +26,6 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
 
 if __name__ == '__main__':
     main()

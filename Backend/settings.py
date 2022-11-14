@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-**eqvf^%n1f98mjd2k%2y+(8*4@lr6u$anff3nc^71468renax
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','houshdb.postgres.database.azure.com','houshbetesting.azurewebsites.net']
+ALLOWED_HOSTS = ['127.0.0.1','houshdb.postgres.database.azure.com','houshbe.azurewebsites.net']
 
 import datetime
 # Application definition
@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Housh.apps.HoushConfig',
     'rest_framework',
-    'houses',
+    'storages',
     'clients',
+    'houses',
 
 ]
 
@@ -84,6 +85,7 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ['DBNAME'],
@@ -92,7 +94,6 @@ DATABASES = {
         'PASSWORD': os.environ['DBPASS'],
         'PORT': '5432',
         'OPTIONS': {'sslmode': 'require'}
-
     }
 }
 
@@ -134,6 +135,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+DEFAULT_FILE_STORAGE = 'Backend.custom_azure.AzureMediaStorage'
+STATICFILES_STORAGE = 'Backend.custom_azure.AzureStaticStorage'
+
+STATIC_LOCATION = "static"
+MEDIA_LOCATION = "media"
+
+AZURE_ACCOUNT_NAME = "houshstorage"
+AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
+STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
