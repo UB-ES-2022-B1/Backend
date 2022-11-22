@@ -5,7 +5,7 @@ from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 
 from clients.models import Client
-from .serializers import HouseSerializer
+from .serializers import HouseSerializer, ImageSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -17,9 +17,15 @@ from .models import House
 class CreateHouseView(APIView):
 
     def post(self, request):
-        serializer = HouseSerializer(data=request.data)
+        links= request.data['images']
+        data= request.data.copy()
+        data.pop('images')
+        serializer = HouseSerializer(data=data)
         if serializer.is_valid():
             house = serializer.save()
+            for i in links:
+                serializer= ImageSerializer(data= {'id_house':house.id_house,'link':i})
+                serializer.save()
             return Response({'success': True, 'msg': 'Creation Success', 'id_house': house.id_house},
                             status=status.HTTP_201_CREATED)
         return Response({'success': False, 'msg': 'House already exist!'}, status=status.HTTP_400_BAD_REQUEST)
