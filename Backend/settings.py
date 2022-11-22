@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from .DEFAULT import DEFAULT_HEADERS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,6 @@ import datetime
 # Application definition
 
 INSTALLED_APPS = [
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,18 +40,18 @@ INSTALLED_APPS = [
     'rest_framework',
     'houses',
     'clients',
-
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 
 ]
 
@@ -130,11 +130,14 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8000','http://192.168.1.150:3000','http://127.0.0.1:3000' ]
+#CORS_ORIGIN_WHITELIST = ['*']
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_HEADERS = DEFAULT_HEADERS 
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8000','http://192.168.1.150:3000','http://127.0.0.1:3000']
+CORS_ALLOWED_ORIGINS = CORS_ORIGIN_WHITELIST
 AUTH_PROFILE_MODULE = 'clients.Client'
 AUTH_USER_MODEL = 'clients.Client'
-
+CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),

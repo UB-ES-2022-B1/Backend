@@ -17,12 +17,13 @@ from .models import House
 class CreateHouseView(APIView):
 
     def post(self, request):
-        serializer = HouseSerializer(data=request.data)
-        if serializer.is_valid():
-            house = serializer.save()
-            return Response({'success': True, 'msg': 'Creation Success', 'id_house': house.id_house},
-                            status=status.HTTP_201_CREATED)
-        return Response({'success': False, 'msg': 'House already exist!'}, status=status.HTTP_400_BAD_REQUEST)
+        if request.user.is_authenticated:
+            serializer = HouseSerializer(data=request.data)
+            if serializer.is_valid():
+                house = serializer.save()
+                return Response({'success': True, 'msg': 'Creation Success', 'id_house': house.id_house},
+                                status=status.HTTP_201_CREATED)
+            return Response({'success': False, 'msg': 'House already exist!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetHouseView(APIView):
