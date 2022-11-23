@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from .models import House
 
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class CreateHouseView(APIView):
@@ -28,8 +29,7 @@ class CreateHouseView(APIView):
 
 
 class GetHouseView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = (AllowAny,)
     def post(self, request):
         try:
             house = House.objects.get(id_house=request.data['id_house'])
