@@ -85,13 +85,13 @@ class ClientTests(APITestCase):
     #     Test to see user profile
     #     """
     #
-    #     data_registro2 = {"name": "Enrique",
-    #                       "surname": "falso2",
-    #                       "password": "ASD1235",
-    #                       "email": "mailfalso24@yahoo.com",
-    #                       "phone": "123091243",
-    #                       "country": "Narnia",
-    #                       "birthdate": "1987-06-12"}
+        data_registro2 = {"name": "Enrique",
+                          "surname": "falso2",
+                          "password": "ASD1235",
+                          "email": "mailfalso24@yahoo.com",
+                          "phone": "123091243",
+                          "country": "Narnia",
+                          "birthdate": "1987-06-12"}
     #     self.client.post('http://127.0.0.1:8000/accounts/register', data_registro2, format='json')
     #
     #     data_good = {"email": "mailfalso24@yahoo.com",
@@ -119,6 +119,6 @@ class ClientTests(APITestCase):
         response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
         token = response.json()['access']
 
-        response = self.client.get('http://localhost:8000/houses/get-house', data={"id_house": 7}, headers={'Authorization': 'Bearer:' + token}, format='json')
+        response = self.client.get('http://127.0.0.1:8000/houses/get-house', data={"id_house": 7}, headers={'Authorization': 'Bearer:' + token}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

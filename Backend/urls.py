@@ -18,7 +18,7 @@ from django.urls import path
 
 import houses
 from clients import views
-from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView
+from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView,CheckLoginView
 from rest_framework_simplejwt import views as jwt_views
 
 
@@ -30,7 +30,8 @@ urlpatterns = [
     path('accounts/logout', LogoutView.as_view(), name='register'),
     path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
     path('accounts/get-token', jwt_views.TokenObtainPairView.as_view() , name='token_generate'),
-    path('accounts/get-refresh-token', jwt_views.TokenRefreshView.as_view(), name='refresh-token'),
+    path('accounts/checkLogin',CheckLoginView.as_view(),name='check_login'),
+    path('accounts/refresh-token', jwt_views.TokenRefreshView.as_view(), name='refresh-token'),
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
