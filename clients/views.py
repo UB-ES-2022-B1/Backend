@@ -14,10 +14,13 @@ from clients.utils import get_tokens_for_user
 from .models import Client
 from .serializers import RegistrationSerializer, PasswordChangeSerializer
 
+from rest_framework.permissions import AllowAny
+
 
 # Create your views here.
 
 class RegistrationView(APIView):
+    permission_classes = (AllowAny,)
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -27,6 +30,7 @@ class RegistrationView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = (AllowAny,)
     def post(self, request):
         if 'email' not in request.data or 'password' not in request.data:
             return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
@@ -44,6 +48,7 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         logout(request)
         return Response({'success':True,'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
@@ -61,7 +66,7 @@ class ChangePasswordView(APIView):
 
 
 class GetProfileView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         try:
             client = Client.objects.get(email=request.data['email'])

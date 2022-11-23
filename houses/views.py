@@ -15,6 +15,7 @@ from .models import House
 
 # Create your views here.
 class CreateHouseView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         if request.user.is_authenticated:
@@ -27,6 +28,8 @@ class CreateHouseView(APIView):
 
 
 class GetHouseView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
             house = House.objects.get(id_house=request.data['id_house'])

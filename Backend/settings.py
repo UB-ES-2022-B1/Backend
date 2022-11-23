@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Housh.apps.HoushConfig',
     'rest_framework',
+    'rest_framework_simplejwt',
     'houses',
     'clients',
     'corsheaders'
@@ -52,9 +53,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES':(
+                'rest_framework.permissions.IsAuthenticated',
+    ),
+
+}
 ROOT_URLCONF = 'Backend.urls'
 
 TEMPLATES = [
@@ -130,14 +139,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-#CORS_ORIGIN_WHITELIST = ['*']
-CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOW_HEADERS = DEFAULT_HEADERS 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:8000','http://192.168.1.150:3000','http://127.0.0.1:3000']
-CORS_ALLOWED_ORIGINS = CORS_ORIGIN_WHITELIST
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ['http://localhost:8000', ]
 AUTH_PROFILE_MODULE = 'clients.Client'
 AUTH_USER_MODEL = 'clients.Client'
-CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
@@ -146,5 +151,4 @@ SIMPLE_JWT = {
 AUTHENTICATION_BACKENDS = [
     'clients.backends.ClientBackend',
     'django.contrib.auth.backends.ModelBackend',
-
 ]

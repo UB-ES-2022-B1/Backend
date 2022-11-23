@@ -20,13 +20,17 @@ import houses
 from clients import views
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView
 from rest_framework_simplejwt import views as jwt_views
+
+
+
 from houses.views import CreateHouseView,GetHouseView,GetAllHouseView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
     path('accounts/logout', LogoutView.as_view(), name='register'),
     path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
-    path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('accounts/get-token', jwt_views.TokenObtainPairView.as_view() , name='token_generate'),
+    path('accounts/get-refresh-token', jwt_views.TokenRefreshView.as_view(), name='refresh-token'),
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
