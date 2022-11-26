@@ -45,7 +45,7 @@ class House(models.Model):
     health_kit = models.BooleanField()
 
     def toJson(self):
-        array_images= HouseImages.objects.filter(id_house=self.id_house)
+        array_images = HouseImages.objects.filter(id_house=self.id_house)
         json = {"blocked": self.blocked,
                 "title": self.title,
                 "owner": self.owner,
@@ -77,8 +77,9 @@ class House(models.Model):
                 "alarm": self.alarm,
                 "smoke_detector": self.smoke_detector,
                 "health_kit": self.health_kit,
-                "images":array_images},
+                "images": array_images},
         return json
+
 
 class HouseImages(models.Model):
     id_house = models.IntegerField()

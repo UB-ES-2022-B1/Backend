@@ -11,7 +11,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from .models import House
-
+import uuid
+from azure.storage.blob import BlockBlobService
 
 # Create your views here.
 class CreateHouseView(APIView):
