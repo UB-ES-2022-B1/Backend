@@ -46,6 +46,11 @@ class House(models.Model):
 
     def toJson(self):
         array_images = HouseImages.objects.filter(id_house=self.id_house)
+
+        links = []
+        for i in array_images:
+            links.append(i.link)
+
         json = {"blocked": self.blocked,
                 "title": self.title,
                 "owner": self.owner,
@@ -77,7 +82,7 @@ class House(models.Model):
                 "alarm": self.alarm,
                 "smoke_detector": self.smoke_detector,
                 "health_kit": self.health_kit,
-                "images": array_images},
+                "images": links},
         return json
 
 

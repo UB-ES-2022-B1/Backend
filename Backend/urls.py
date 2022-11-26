@@ -17,13 +17,10 @@ from django.contrib import admin
 from django.urls import path
 
 import houses
-from Backend import settings
-from clients import views
+
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView
 from rest_framework_simplejwt import views as jwt_views
-from houses.views import CreateHouseView,GetHouseView,GetAllHouseView
-from django.conf import settings
-from django.conf.urls.static import static
+from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
@@ -34,4 +31,5 @@ urlpatterns = [
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image')
+]

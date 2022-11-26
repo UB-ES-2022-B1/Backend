@@ -29,7 +29,6 @@ import datetime
 # Application definition
 
 INSTALLED_APPS = [
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-
 ]
 
 ROOT_URLCONF = 'Backend.urls'
@@ -76,7 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Backend.wsgi.application'
 
-
+hostname = os.environ['DBHOST']
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -121,27 +119,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-
-# Actual directory user files go to
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
-DEFAULT_FILE_STORAGE = 'backend.custom_azure.AzureMediaStorage'
-STATICFILES_STORAGE = 'backend.custom_azure.AzureStaticStorage'
-
-STATIC_LOCATION = "static"
-MEDIA_LOCATION = "media"
-
-STATIC_LOCATION = "static"
-MEDIA_LOCATION = "media"
-
-AZURE_ACCOUNT_NAME = "houshstorage"
-AZURE_CUSTOM_DOMAIN = f'{AZURE_ACCOUNT_NAME}.blob.core.windows.net'
-STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
-MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -159,6 +136,5 @@ SIMPLE_JWT = {
 AUTHENTICATION_BACKENDS = [
     'clients.backends.ClientBackend',
     'django.contrib.auth.backends.ModelBackend',
-
 ]
 
