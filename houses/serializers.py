@@ -7,7 +7,7 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = [
-            'title', 'owner', 'description', 'location', 'base_price', 'extra_costs', 'taxes',
+            'blocked','title','id_house','owner', 'description', 'location', 'base_price', 'extra_costs', 'taxes',
             'num_hab', 'num_bathrooms', 'num_beds', 'num_people', 'company_individual',
             'kitchen', 'swiming_pool', 'garden', 'billar_table', 'gym', 'TV', 'WIFII', 'dishwasher',
             'washing_machine', 'air_conditioning', 'free_parking', 'spacious', 'central', 'quite',
@@ -17,7 +17,7 @@ class HouseSerializer(serializers.ModelSerializer):
     def save(self):
         house = House(
             title=self.validated_data['title'], owner=self.validated_data['owner'],
-            description=self.validated_data['title'], location=self.validated_data['location'],
+            description=self.validated_data['description'], location=self.validated_data['location'],
             base_price=self.validated_data['base_price'], extra_costs=self.validated_data['extra_costs'],
             taxes=self.validated_data['taxes'], num_hab=self.validated_data['num_hab'],
             num_bathrooms=self.validated_data['num_bathrooms'], num_beds=self.validated_data['num_beds'],

@@ -16,20 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-import houses.views
+import houses
 from clients import views
-from clients.views import RegistrationView, LoginView, LogoutView,ChangePasswordView, GetProfileView
+from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView,CheckLoginView
 from rest_framework_simplejwt import views as jwt_views
-from houses.views import CreateHouseView
 
+
+
+from houses.views import CreateHouseView,GetHouseView,GetAllHouseView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
-    path('accounts/login', LoginView.as_view(), name='login'),
-    path('accounts/logout', LogoutView.as_view(), name='logout'),
-    path('accounts/change-password', ChangePasswordView.as_view(), name='change_password'),
-    path('accounts/token-refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('accounts/login', LoginView.as_view(), name='register'),
+    path('accounts/logout', LogoutView.as_view(), name='register'),
+    path('accounts/change-password', ChangePasswordView.as_view(), name='register'),
+    path('accounts/get-token', jwt_views.TokenObtainPairView.as_view() , name='token_generate'),
+    path('accounts/checkLogin',CheckLoginView.as_view(),name='check_login'),
+    path('accounts/refresh-token', jwt_views.TokenRefreshView.as_view(), name='refresh-token'),
     path('accounts/get-profile', GetProfileView.as_view(), name='get_profile'),
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
-
+    path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
 ]

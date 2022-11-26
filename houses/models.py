@@ -8,12 +8,11 @@ from clients.models import Client
 
 
 class House(models.Model):
-    blocked = models.CharField(max_length=50)  # True => cant be up for sale || False =>
+    blocked = models.BooleanField(default=False)  # True => cant be up for sale || False =>
     title = models.CharField(max_length=50)
     owner = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
     location = models.CharField(max_length=100)
-    # image = models.ImageField(upload_to=pics)
     id_house = models.IntegerField(null=True)
 
     base_price = models.FloatField(max_length=7)
@@ -78,10 +77,3 @@ class House(models.Model):
                 "smoke_detector": self.smoke_detector,
                 "health_kit": self.health_kit}
         return json
-
-
-class HouseImage(models.Model):
-    house = models.ForeignKey(House, related_name="image", on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    url = models.CharField(max_length=200)
-    extension = models.CharField(max_length=10)
