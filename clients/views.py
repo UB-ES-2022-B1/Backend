@@ -14,10 +14,14 @@ from clients.utils import get_tokens_for_user
 from .models import Client
 from .serializers import RegistrationSerializer, PasswordChangeSerializer
 
+from rest_framework.permissions import AllowAny
+
 
 # Create your views here.
 
 class RegistrationView(APIView):
+    permission_classes = (AllowAny,)
+
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -27,6 +31,8 @@ class RegistrationView(APIView):
 
 
 class LoginView(APIView):
+    permission_classes = (AllowAny,)
+
     def post(self, request):
         if 'email' not in request.data or 'password' not in request.data:
             return Response({'msg': 'Credentials missing'}, status=status.HTTP_400_BAD_REQUEST)
@@ -38,15 +44,17 @@ class LoginView(APIView):
                 login(request, user)
                 auth_data = get_tokens_for_user(request.user)
 
-                return Response({'success':True,'msg': 'Login Success',**auth_data}, status=status.HTTP_200_OK)
+                return Response({'success': True, 'msg': 'Login Success', **auth_data}, status=status.HTTP_200_OK)
         except ValueError as e:
-            return Response({'success':False,'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'success': False, 'msg': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         logout(request)
-        return Response({'success':True,'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
+        return Response({'success': True, 'msg': 'Successfully Logged out'}, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(APIView):
@@ -61,6 +69,7 @@ class ChangePasswordView(APIView):
 
 
 class GetProfileView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -68,3 +77,11 @@ class GetProfileView(APIView):
             return Response({'success': True, 'msg': client.toJson()}, status=status.HTTP_200_OK)
         except:
             return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+
+class CheckLoginView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self):
+        return Response({'success': True}, status=status.HTTP_200_OK)
+

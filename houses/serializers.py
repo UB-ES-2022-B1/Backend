@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import House
+from .models import House, HouseImages
 from clients.models import Client
 
 
@@ -7,7 +7,7 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = [
-            'blocked','title','id_house','owner', 'description', 'location', 'base_price', 'extra_costs', 'taxes',
+            'blocked', 'title', 'id_house', 'owner', 'description', 'location', 'base_price', 'extra_costs', 'taxes',
             'num_hab', 'num_bathrooms', 'num_beds', 'num_people', 'company_individual',
             'kitchen', 'swiming_pool', 'garden', 'billar_table', 'gym', 'TV', 'WIFII', 'dishwasher',
             'washing_machine', 'air_conditioning', 'free_parking', 'spacious', 'central', 'quite',
@@ -37,3 +37,17 @@ class HouseSerializer(serializers.ModelSerializer):
         house.id_house = house.id
         house.save()
         return house
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = HouseImages
+        fields = [
+            'id_house', 'link'
+        ]
+
+    def save(self):
+        image = HouseImages(
+            id_house=self.validated_data['id_house'], link=self.validated_data['link']
+        )
+        image.save()

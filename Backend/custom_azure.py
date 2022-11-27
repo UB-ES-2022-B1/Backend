@@ -13,4 +13,3 @@ class AzureStaticStorage(AzureStorage):
     account_key = 'QYKpAl2PqpJ1agt93Emf75t7jXZopWYSrVcC828eeG2M/wnEnAT/GsERE0q956unML1lzyvxDsU6+AStUtAvcg=='  # Must be replaced by your <storage_account_key>
     azure_container = 'static'
     expiration_secs = None
-

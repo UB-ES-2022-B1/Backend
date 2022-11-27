@@ -18,15 +18,13 @@ class VivendaTest(APITestCase):
         """
         Ensure we can create a new vivenda object.
         """
-        # we will create an account and a hous attached to it
-
-        data_client = {"name": "Lucas",
-                       "surname": "Garcia",
-                       "password": "ASD1235",
-                       "email": "mailfalso1@yahoo.com",
-                       "phone": "123091243",
-                       "country": "Argentina",
-                       "birthdate": "1987-06-12"}
+        data_registro1 = {"name": 'mail',
+                          'surname': 'falso1',
+                          'password': 'ASD1235',
+                          'email': 'mailfalso23@yahoo.com',
+                          'phone': '123091243',
+                          'country': 'Argentina',
+                          'birthdate': '1987-06-12'}
 
         data_house = {
             "title": "casa1",
@@ -60,11 +58,13 @@ class VivendaTest(APITestCase):
             "health_kit": "False"
 
         }
-        data_login = {"password": "ASD1235",
-                      "email": "mailfalso1@yahoo.com"}
-        self.client.post('http://localhost:8000/accounts/register', data_client, format='json')
-        self.client.post('http://localhost:8000/accounts/login', data_login, format='json')
-        response = self.client.post('http://localhost:8000/houses/register', data_house, format='json')
+
+        self.client.post('http://localhost:8000/accounts/register', data_registro1, format='json')
+
+        data_good = {"password": "ASD1235", "email": "mailfalso23@yahoo.com"}
+        response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
+        token = response.json()['access']
+
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=data_house,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(House.objects.count(), 1)
-        self.assertEqual(House.objects.get(owner_id='mailfalso1@yahoo.com').title, 'casa1')
