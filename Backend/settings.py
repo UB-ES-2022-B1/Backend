@@ -87,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Backend.wsgi.application'
 
-hostname = os.environ['DBHOST']
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
