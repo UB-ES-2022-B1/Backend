@@ -72,8 +72,8 @@ class GetHouseView(APIView):
     def post(self, request):
         try:
             house = House.objects.get(id_house=request.data['id_house'])
-            msg = house.toJson()
-            return Response({'success': True, 'msg': msg}, status=status.HTTP_200_OK)
+
+            return Response({'success': True, 'msg': house.toJson()}, status=status.HTTP_200_OK)
         except:
             return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
 
