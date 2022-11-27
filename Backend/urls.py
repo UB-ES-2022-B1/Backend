@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+import houses
 
 from rest_framework_simplejwt import views as jwt_views
 from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView
