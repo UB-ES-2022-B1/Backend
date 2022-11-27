@@ -8,7 +8,6 @@ from django.test import Client as cl
 from .models import Client
 import json
 
-
 class ClientTests(APITestCase):
 
     def test_create_account(self):
@@ -111,6 +110,7 @@ class ClientTests(APITestCase):
         self.assertEqual(response.data['msg']['name'], "Enrique")
 
     def test_login_token(self):
+
         data_registro1 = {"name": 'mail',
                           'surname': 'falso1',
                           'password': 'ASD1235',
