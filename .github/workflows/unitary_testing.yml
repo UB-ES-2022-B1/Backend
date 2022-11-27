@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   test_project:
-    runs-on: ubuntu-latest # operating system your code will run on
+    runs-on: self-hosted # operating system your code will run on
     steps:
       - uses: actions/checkout@v3
 
