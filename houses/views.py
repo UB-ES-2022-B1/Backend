@@ -17,10 +17,12 @@ import os
 from .models import House
 
 from azure.storage.blob import BlobServiceClient, ContentSettings, BlobClient
+from rest_framework.permissions import AllowAny
 
 
 # Create your views here.
 class CreateHouseView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = HouseSerializer(data=request.data)
@@ -72,7 +74,7 @@ class GetHouseView(APIView):
             msg = house.toJson()
             return Response({'success': True, 'msg': msg}, status=status.HTTP_200_OK)
         except:
-            return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetAllHouseView(APIView):

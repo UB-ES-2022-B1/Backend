@@ -31,9 +31,10 @@ class Client(AbstractBaseUser):
     country = models.CharField("Country", max_length=30)
     birthdate = models.DateField("Birth Date")
     failedLoginAttemps = models.IntegerField("Number of Failed logins", default=0)
+    USERNAME_FIELD = 'email'
+
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
 
     def increment_failed_login(self):
         self.failedLoginAttemps += 1
