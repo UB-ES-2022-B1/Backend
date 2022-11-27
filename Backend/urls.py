@@ -15,12 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,SearchHousesView
 import houses
-from clients import views
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView
 from rest_framework_simplejwt import views as jwt_views
-from houses.views import CreateHouseView,GetHouseView,GetAllHouseView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
@@ -31,4 +29,5 @@ urlpatterns = [
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
+    path('houses/search-houses',houses.views.SearchHousesView.as_view(), name='get_all_houses'),
 ]

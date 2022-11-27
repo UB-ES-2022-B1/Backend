@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from clients.models import Client
 from .serializers import HouseSerializer
@@ -15,6 +15,7 @@ from .models import House
 
 # Create your views here.
 class CreateHouseView(APIView):
+    permission_classes = [AllowAny, ]
 
     def post(self, request):
         serializer = HouseSerializer(data=request.data)
@@ -45,3 +46,17 @@ class GetAllHouseView(APIView):
             return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except:
             return Response({'success': False, 'msg': "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+class SearchHousesView(APIView):
+    def post(self,request):
+        try:
+            houses= House.objects.all()
+            ids=[]
+            for i in houses:
+                if request.data['town'].upper() == i.town.upper() and request.data['num_people'] <= i.num_people:
+                    ids.append(i.id_house)
+            if len(ids)==0:
+                return Response({'success': True, 'msg': "No matches with client preferences"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+        except:
+            return Response({'success': False, 'msg': "Connexion error with Database"}, status=status.HTTP_400_BAD_REQUEST)
+
