@@ -77,6 +77,7 @@ class GetHouseView(APIView):
 
 
 class GetAllHouseView(APIView):
+    permission_classes = [AllowAny, ]
 
     def post(self, request):
         try:
@@ -105,6 +106,8 @@ class GetAllHouseView(APIView):
 
 
 class SearchHousesView(APIView):
+    permission_classes = [AllowAny, ]
+    
     def post(self, request):
         try:
             houses = House.objects.all()
