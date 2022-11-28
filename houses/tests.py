@@ -70,7 +70,7 @@ class VivendaTest(APITestCase):
         response = self.client.post('http://localhost:8000/houses/register', data_house, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(House.objects.count(), 1)
-        self.assertEqual(House.objects.get(owner_id='mailfalso1@yahoo.com').title, 'casa1')
+        self.assertEqual(House.objects.get(owner='mailfalso1@yahoo.com').title, 'casa1')
 
     def test_searchVivienda(self):
         data_house = {
@@ -180,7 +180,7 @@ class VivendaTest(APITestCase):
         }
 
         response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou","num_people": 3}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         response = self.client.post('http://localhost:8000/houses/register', data_house, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -195,7 +195,6 @@ class VivendaTest(APITestCase):
 
         response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 15},format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(len(response.data['ids']),0)
 
         response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 5},format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
