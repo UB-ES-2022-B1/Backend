@@ -42,7 +42,7 @@ class UploadImageView(APIView):
             House.objects.get(id_house=request.POST['house_id'])
             if len(request.FILES.getlist("files")) > 0:
                 for file in request.FILES.getlist("files"):
-                    uuid = uuid.uuid4()
+                    uuid = datetime.datetime.now()
                     file_upload_name = str(uuid) + file.name
                     blob_service_client = BlobServiceClient.from_connection_string(conn_str=os.environ['STORAGE'])
 
