@@ -50,7 +50,7 @@ class UploadImageView(APIView):
                     file_io = BytesIO(file.read())
                     container_client.upload_blob(name=file_upload_name, data=file_io)
 
-                    serializer = ImageSerializer(data={'id_house': request.POST['house_id'], 'link': file_upload_name})
+                    serializer = ImageSerializer(data={'id_house': request.POST['id_house'], 'link': file_upload_name})
                     if serializer.is_valid():
                         serializer.save()
 
