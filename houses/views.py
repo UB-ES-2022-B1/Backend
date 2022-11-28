@@ -1,8 +1,3 @@
-
-import datetime
-import uuid
-from io import BytesIO
-
 from django.shortcuts import render
 
 # Create your views here.
@@ -14,6 +9,9 @@ from .serializers import HouseSerializer, ImageSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+import datetime
+import uuid
+from io import BytesIO
 import os
 from .models import House
 
@@ -104,3 +102,20 @@ class GetAllHouseView(APIView):
             return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except:
             return Response({'success': False, 'msg': "Wrong page id or connection error with database"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SearchHousesView(APIView):
+    def post(self, request):
+        try:
+            houses = House.objects.all()
+            ids = []
+            for i in houses:
+                if request.data['town'].upper() == i.town.upper() and request.data['num_people'] <= i.num_people:
+                    ids.append(i.id_house)
+            if len(ids) == 0:
+                return Response({'success': True, 'msg': "No matches with client preferences"},
+                                status=status.HTTP_204_NO_CONTENT)
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+        except:
+            return Response({'success': False, 'msg': "Connexion error with Database"},
+                            status=status.HTTP_400_BAD_REQUEST)
