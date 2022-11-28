@@ -18,7 +18,7 @@ from django.urls import path
 import houses
 
 from rest_framework_simplejwt import views as jwt_views
-from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView
+from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView,SearchHousesView
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView,CheckLoginView
 from rest_framework_simplejwt import views as jwt_views
 
@@ -34,5 +34,6 @@ urlpatterns = [
     path('houses/register', houses.views.CreateHouseView.as_view(), name='register_house'),
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
+    path('houses/search-houses',houses.views.SearchHousesView.as_view(), name='get_all_houses'),
     path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image')
 ]
