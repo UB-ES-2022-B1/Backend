@@ -39,7 +39,7 @@ class UploadImageView(APIView):
     def post(self, request):
 
         try:
-            House.objects.get(id_house=request.POST['house_id'])
+            House.objects.get(id_house=request.POST['id_house'])
             if len(request.FILES.getlist("files")) > 0:
                 for file in request.FILES.getlist("files"):
                     uuid = datetime.datetime.now()
