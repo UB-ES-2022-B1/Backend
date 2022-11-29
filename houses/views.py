@@ -114,10 +114,10 @@ class SearchHousesView(APIView):
             for i in houses:
                 if request.data['town'].upper() == i.town.upper() and request.data['num_people'] <= i.num_people:
                     ids.append(i.id_house)
-            if len(ids) == 0:
-                return Response({'success': True, 'msg': "No matches with client preferences"},
-                                status=status.HTTP_204_NO_CONTENT)
-            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+            if ids:
+                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+
+            return Response({'success': True, 'msg': "No matches with client preferences"},status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
