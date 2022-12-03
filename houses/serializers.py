@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import House
+from .models import House, HouseImages
 from clients.models import Client
 
 
@@ -7,7 +7,7 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = [
-            'blocked','title','id_house','owner', 'description', 'location', 'base_price', 'extra_costs', 'taxes',
+            'blocked','title','id_house','owner', 'description', 'street','province','country','town', 'base_price', 'extra_costs', 'taxes',
             'num_hab', 'num_bathrooms', 'num_beds', 'num_people', 'company_individual',
             'kitchen', 'swiming_pool', 'garden', 'billar_table', 'gym', 'TV', 'WIFII', 'dishwasher',
             'washing_machine', 'air_conditioning', 'free_parking', 'spacious', 'central', 'quite',
@@ -17,7 +17,8 @@ class HouseSerializer(serializers.ModelSerializer):
     def save(self):
         house = House(
             title=self.validated_data['title'], owner=self.validated_data['owner'],
-            description=self.validated_data['description'], location=self.validated_data['location'],
+            description=self.validated_data['description'], street=self.validated_data['street'],
+            province=self.validated_data['province'],country=self.validated_data['country'],town=self.validated_data['town'],
             base_price=self.validated_data['base_price'], extra_costs=self.validated_data['extra_costs'],
             taxes=self.validated_data['taxes'], num_hab=self.validated_data['num_hab'],
             num_bathrooms=self.validated_data['num_bathrooms'], num_beds=self.validated_data['num_beds'],
@@ -37,3 +38,17 @@ class HouseSerializer(serializers.ModelSerializer):
         house.id_house = house.id
         house.save()
         return house
+
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = HouseImages
+        fields = [
+            'id_house', 'link'
+        ]
+
+    def save(self):
+        image = HouseImages(
+            id_house=self.validated_data['id_house'], link=self.validated_data['link']
+        )
+        image.save()

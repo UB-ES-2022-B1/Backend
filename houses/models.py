@@ -12,7 +12,12 @@ class House(models.Model):
     title = models.CharField(max_length=50)
     owner = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
-    location = models.CharField(max_length=100)
+
+    country= models.CharField(max_length=50)
+    province=models.CharField(max_length=50)
+    town= models.CharField(max_length=50)
+    street= models.CharField(max_length=100)
+
     id_house = models.IntegerField(null=True)
 
     base_price = models.FloatField(max_length=7)
@@ -45,11 +50,20 @@ class House(models.Model):
     health_kit = models.BooleanField()
 
     def toJson(self):
+        array_images = HouseImages.objects.filter(id_house=self.id_house)
+
+        links = []
+        for i in array_images:
+            links.append(i.link)
+
         json = {"blocked": self.blocked,
                 "title": self.title,
                 "owner": self.owner,
                 "description": self.description,
-                "location": self.location,
+                "street": self.street,
+                "town": self.town,
+                "country": self.country,
+                "province": self.province,
                 "id_house": self.id_house,
                 "base_price": self.base_price,
                 "extra_costs": self.extra_costs,
@@ -75,5 +89,11 @@ class House(models.Model):
                 "quite": self.quite,
                 "alarm": self.alarm,
                 "smoke_detector": self.smoke_detector,
-                "health_kit": self.health_kit}
+                "health_kit": self.health_kit,
+                "images": links},
         return json
+
+
+class HouseImages(models.Model):
+    id_house = models.IntegerField()
+    link = models.CharField(max_length=200)
