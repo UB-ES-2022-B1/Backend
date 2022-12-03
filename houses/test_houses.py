@@ -18,22 +18,25 @@ class VivendaTest(APITestCase):
         """
         Ensure we can create a new vivenda object.
         """
-        data_registro1 = {"name": 'mail',
-                          'surname': 'falso1',
-                          'password': 'ASD1235',
-                          'email': 'mailfalso23@yahoo.com',
-                          'phone': '123091243',
-                          'country': 'Argentina',
-                          'birthdate': '1987-06-12'}
+        data_registro1 = {"name": "mail",
+                          "surname": "falso1",
+                          "password": "ASD1235",
+                          "email": "mailfalso1@yahoo.com",
+                          "phone": "123091243",
+                          "country": "Argentina",
+                          "birthdate": "1987-06-12"}
 
         data_house = {
             "title": "casa1",
             "owner": "mailfalso1@yahoo.com",
             "description": "bonica",
-            "location": "Tarragona",
-            "base_price": "100",
-            "extra_costs": "10",
-            "taxes": "4",
+            "province": "Tarragona",
+            "country":"Spain",
+            "town":"Salou",
+            "street":"Carrer Mestre 13",
+            "base_price": 100,
+            "extra_costs": 10,
+            "taxes": 4,
             "num_hab": "4",
             "num_beds": "8",
             "num_bathrooms": "4",
