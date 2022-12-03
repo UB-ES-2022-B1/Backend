@@ -8,25 +8,24 @@ from django.test import Client as cl
 from .models import Client
 import json
 
+
 class ClientTests(APITestCase):
+    data_registro = {"name": "Lucas",
+                     "surname": "falso1",
+                     "password": "ASD1235",
+                     "email": "mailfalso23@yahoo.com",
+                     "phone": "123091243",
+                     "country": "Argentina",
+                     "birthdate": "1987-06-12"}
 
     def test_create_account(self):
         """
         Ensure we can create a new client object.
         """
-
-        data = {'name': 'Lucas',
-                'surname': 'Garcia',
-                'password': 'ASD1235',
-                'email': 'mailfalso1@yahoo.com',
-                'phone': '123091243',
-                'country': 'Argentina',
-                'birthdate': '1987-06-12'}
-
-        response = self.client.post('http://localhost:8000/accounts/register', data, format='json')
+        response = self.client.post('http://localhost:8000/accounts/register', self.data_registro, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Client.objects.count(), 1)
-        self.assertEqual(Client.objects.get(email='mailfalso1@yahoo.com').name, 'Lucas')
+        self.assertEqual(Client.objects.get(email='mailfalso23@yahoo.com').name, 'Lucas')
 
     def test_log_in(self):
         """
@@ -84,17 +83,9 @@ class ClientTests(APITestCase):
         Test to see user profile
         """
 
-        data_registro2 = {"name": "Enrique",
-                          "surname": "falso2",
-                          "password": "ASD1235",
-                          "email": "mailfalso24@yahoo.com",
-                          "phone": "123091243",
-                          "country": "Narnia",
-                          "birthdate": "1987-06-12"}
+        self.client.post('http://127.0.0.1:8000/accounts/register', self.data_registro, format='json')
 
-        self.client.post('http://127.0.0.1:8000/accounts/register', data_registro2, format='json')
-
-        data_good = {"email": "mailfalso24@yahoo.com",
+        data_good = {"email": "mailfalso23@yahoo.com",
                      "password": "ASD1235"}
         response = self.client.post('http://localhost:8000/accounts/login', data_good, format='json')
 
@@ -102,31 +93,25 @@ class ClientTests(APITestCase):
 
         token = response.json()['access']
 
-        mail = {"email": "mailfalso24@yahoo.com"}
+        mail = {"email": "mailfalso23@yahoo.com"}
         response = self.client.post('http://localhost:8000/accounts/get-profile', mail, format='json',
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['msg']['name'], "Enrique")
+        self.assertEqual(response.data['msg']['name'], "Lucas")
 
     def test_login_token(self):
-
-        data_registro1 = {"name": 'mail',
-                          'surname': 'falso1',
-                          'password': 'ASD1235',
-                          'email': 'mailfalso23@yahoo.com',
-                          'phone': '123091243',
-                          'country': 'Argentina',
-                          'birthdate': '1987-06-12'}
-
         data_house = {
             "title": "casa1",
             "owner": "mailfalso1@yahoo.com",
             "description": "bonica",
-            "location": "Tarragona",
-            "base_price": "100",
-            "extra_costs": "10",
-            "taxes": "4",
+            "province": "Tarragona",
+            "country": "Spain",
+            "town": "Salou",
+            "street": "Carrer Mestre 13",
+            "base_price": 100,
+            "extra_costs": 10,
+            "taxes": 4,
             "num_hab": "4",
             "num_beds": "8",
             "num_bathrooms": "4",
@@ -152,7 +137,7 @@ class ClientTests(APITestCase):
 
         }
 
-        self.client.post('http://localhost:8000/accounts/register', data_registro1, format='json')
+        self.client.post('http://localhost:8000/accounts/register', self.data_registro, format='json')
 
         data_good = {"password": "ASD1235", "email": "mailfalso23@yahoo.com"}
         response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
@@ -161,3 +146,14 @@ class ClientTests(APITestCase):
         response = self.client.post('http://127.0.0.1:8000/houses/register', data=data_house,
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_change_password(self):
+        self.client.post('http://localhost:8000/accounts/register', self.data_registro, format='json')
+
+        data_good = {"password": "ASD1235", "email": "mailfalso23@yahoo.com"}
+        response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
+        token = response.json()['access']
+        data_pass = {"current_password": "ASD1235", "new_password": "ASD1245"}
+        response = self.client.post('http://127.0.0.1:8000/accounts/change-password', data=data_pass,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
