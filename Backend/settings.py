@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'houses',
     'storages',
     'clients',
+    'favorites'
 ]
 
 MIDDLEWARE = [
@@ -93,8 +94,6 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 #          'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #      }
 # }
-
-# DBHOST is only the server name, not the full URL
 
 # Configure Postgres database; the full username for PostgreSQL flexible server is
 # username (not @sever-name).
