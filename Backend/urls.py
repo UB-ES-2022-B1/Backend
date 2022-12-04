@@ -15,12 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 import houses
 
 from rest_framework_simplejwt import views as jwt_views
 from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView,SearchHousesView
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView,CheckLoginView
 from rest_framework_simplejwt import views as jwt_views
+from favorites.views import AddToFavorites
 
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
@@ -35,5 +37,6 @@ urlpatterns = [
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
     path('houses/search-houses',houses.views.SearchHousesView.as_view(), name='get_all_houses'),
-    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image')
+    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image'),
+    path('favorites/add-house', AddToFavorites.as_view(), name='add house to favorites')
 ]

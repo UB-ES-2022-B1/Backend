@@ -1,10 +1,7 @@
-from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
-from clients.models import Client
 from .serializers import HouseSerializer, ImageSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,7 +11,7 @@ from io import BytesIO
 import os
 from .models import House
 
-from azure.storage.blob import BlobServiceClient, ContentSettings, BlobClient
+from azure.storage.blob import BlobServiceClient
 from rest_framework.permissions import AllowAny
 
 

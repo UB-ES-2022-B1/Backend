@@ -5,10 +5,8 @@ from django.test import TestCase
 
 # Create your tests here.
 
-from django.urls import reverse, path, include
 from rest_framework import status
-from rest_framework.test import APITestCase, URLPatternsTestCase
-# from django.test import Client as cl
+from rest_framework.test import APITestCase
 from .models import House
 
 
