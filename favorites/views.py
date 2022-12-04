@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from clients.models import Client
+from favorites.models import Favorites
 from favorites.serializers import FavoritesSerializer
 from houses.models import House
 from rest_framework.response import Response
@@ -36,4 +37,25 @@ class AddToFavorites(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': 'Incorrect house id!'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetOwnFavorites(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            client = Client.objects.get(email=request.user.email)
+            favs = Favorites.objects.filter(id_client=client.pk)
+            ids = []
+            for i in favs:
+                ids.append(i.id_house_id)
+            if ids:
+                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+
+            return Response({'success': True, 'msg': "User does not have favorites houses"},
+                            status=status.HTTP_204_NO_CONTENT)
+
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': 'Error with database'},
                             status=status.HTTP_400_BAD_REQUEST)
