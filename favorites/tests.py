@@ -61,6 +61,28 @@ class VivendaTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data_favorite = {"id_house": 1}
-        response = self.client.post('http://127.0.0.1:8000/favorites/add-house', data=data_favorite,
+        response = self.client.post('http://127.0.0.1:8000/favorites/add-favorites', data=data_favorite,
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+    def test_get_own_favorites(self):
+        self.client.post('http://localhost:8000/accounts/register', self.data_registro, format='json')
+
+        data_good = {"password": "ASD1235", "email": "mailfalso23@yahoo.com"}
+        response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
+        token = response.json()['access']
+
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data_favorite = {"id_house": 1}
+        response = self.client.post('http://127.0.0.1:8000/favorites/add-favorites', data=data_favorite,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.get('http://127.0.0.1:8000/favorites/get-favorites',
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['ids']), 1)
