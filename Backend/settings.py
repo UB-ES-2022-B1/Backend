@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-from .DEFAULT import DEFAULT_HEADERS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +23,7 @@ SECRET_KEY = 'django-insecure-**eqvf^%n1f98mjd2k%2y+(8*4@lr6u$anff3nc^71468renax
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','houshdb.postgres.database.azure.com','houshbe.azurewebsites.net']
+ALLOWED_HOSTS = ['127.0.0.1','houshbetesting.azurewebsites.net','houshdb.postgres.database.azure.com','houshbe.azurewebsites.net']
 
 import datetime
 # Application definition
@@ -42,11 +41,9 @@ INSTALLED_APPS = [
     'houses',
     'storages',
     'clients',
-    'corsheaders'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -90,14 +87,23 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#      'default': {
+#          'ENGINE': 'django.db.backends.sqlite3',
+#          'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#      }
+# }
+
+# DBHOST is only the server name, not the full URL
+
+# Configure Postgres database; the full username for PostgreSQL flexible server is
+# username (not @sever-name).
 DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-     }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
-
-
 
 
 
@@ -132,6 +138,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+STATIC_URL = '/static/'
 
 
 # Default primary key field type

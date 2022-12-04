@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 import datetime
-import uuid
 from io import BytesIO
 import os
 from .models import House
@@ -34,12 +33,12 @@ class CreateHouseView(APIView):
 
 
 class UploadImageView(APIView):
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
         try:
-            House.objects.get(id_house=request.POST['house_id'])
+            House.objects.get(id_house=request.POST['id_house'])
             if len(request.FILES.getlist("files")) > 0:
                 for file in request.FILES.getlist("files"):
                     uuid = datetime.datetime.now()
@@ -50,7 +49,7 @@ class UploadImageView(APIView):
                     file_io = BytesIO(file.read())
                     container_client.upload_blob(name=file_upload_name, data=file_io)
 
-                    serializer = ImageSerializer(data={'id_house': request.POST['house_id'], 'link': file_upload_name})
+                    serializer = ImageSerializer(data={'id_house': request.POST['id_house'], 'link': file_upload_name})
                     if serializer.is_valid():
                         serializer.save()
 
@@ -70,13 +69,14 @@ class GetHouseView(APIView):
     def post(self, request):
         try:
             house = House.objects.get(id_house=request.data['id_house'])
-            msg = house.toJson()
-            return Response({'success': True, 'msg': msg}, status=status.HTTP_200_OK)
+
+            return Response({'success': True, 'msg': house.toJson()}, status=status.HTTP_200_OK)
         except:
             return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class GetAllHouseView(APIView):
+    permission_classes = [AllowAny, ]
 
     def post(self, request):
         try:
@@ -101,10 +101,13 @@ class GetAllHouseView(APIView):
 
             return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except:
-            return Response({'success': False, 'msg': "Wrong page id or connection error with database"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'msg': "Wrong page id or connection error with database"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchHousesView(APIView):
+    permission_classes = [AllowAny, ]
+
     def post(self, request):
         try:
             houses = House.objects.all()
@@ -112,10 +115,30 @@ class SearchHousesView(APIView):
             for i in houses:
                 if request.data['town'].upper() == i.town.upper() and request.data['num_people'] <= i.num_people:
                     ids.append(i.id_house)
-            if len(ids) == 0:
-                return Response({'success': True, 'msg': "No matches with client preferences"},
-                                status=status.HTTP_204_NO_CONTENT)
-            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+            if ids:
+                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+
+            return Response({'success': True, 'msg': "No matches with client preferences"},
+                            status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+# Función para devolver las viviendas registradas de un propietario.
+class GetOwnHouses(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Filtro las casas cuyo propietario sea igual que el usuario que ha realizado la consulta
+        houses = House.objects.filter(owner=request.user.email)
+
+        # Retorno los ids de las casas
+        ids = []
+        for i in houses:
+            ids.append(i.id_house)
+        if ids:
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+
+        return Response({'success': True, 'msg': "No matches with client preferences"},
+                        status=status.HTTP_204_NO_CONTENT)
