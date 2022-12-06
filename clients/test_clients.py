@@ -151,13 +151,13 @@ class ClientTests(APITestCase):
 
 
 
-        self.client.post('http://localhost:8000/accounts/register', data_registro1, format='json')
+        self.client.post('http://localhost:8000/accounts/register', self.data_registro, format='json')
 
         data_good = {"password": "ASD1235", "email": "mailfalso23@yahoo.com"}
         response = self.client.post('http://127.0.0.1:8000/accounts/login', data_good, format='json')
         token = response.json()['access']
 
-        response = self.client.post('http://127.0.0.1:8000/houses/register', data=data_house,
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house,
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
