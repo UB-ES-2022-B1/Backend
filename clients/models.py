@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
 
 # Clase abstracta que se encarga de crear el usuario base con los atributos por defecto de django
 class UserManager(BaseUserManager):
-    def create_user(self, email, birthdate,name,surname, password=None):
+    def create_user(self, email, birthdate, name, surname, password=None):
         user = self.model(
             email=self.normalize_email(email),
             date_of_birth=birthdate,
@@ -18,6 +18,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+
 
 # Clase cliente con los atributos por defecto.
 class Client(AbstractBaseUser):
@@ -34,7 +35,6 @@ class Client(AbstractBaseUser):
     USERNAME_FIELD = 'email'
 
     objects = UserManager()
-
 
     def increment_failed_login(self):
         self.failedLoginAttemps += 1

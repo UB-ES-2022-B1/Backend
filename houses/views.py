@@ -1,10 +1,7 @@
-from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
-from clients.models import Client
 from .serializers import HouseSerializer, ImageSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,7 +11,7 @@ from io import BytesIO
 import os
 from .models import House
 
-from azure.storage.blob import BlobServiceClient, ContentSettings, BlobClient
+from azure.storage.blob import BlobServiceClient
 from rest_framework.permissions import AllowAny
 
 
@@ -101,12 +98,13 @@ class GetAllHouseView(APIView):
 
             return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except:
-            return Response({'success': False, 'msg': "Wrong page id or connection error with database"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'msg': "Wrong page id or connection error with database"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchHousesView(APIView):
     permission_classes = [AllowAny, ]
-    
+
     def post(self, request):
         try:
             houses = House.objects.all()
@@ -117,7 +115,27 @@ class SearchHousesView(APIView):
             if ids:
                 return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
 
-            return Response({'success': True, 'msg': "No matches with client preferences"},status=status.HTTP_204_NO_CONTENT)
+            return Response({'success': True, 'msg': "No matches with client preferences"},
+                            status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+# Función para devolver las viviendas registradas de un propietario.
+class GetOwnHouses(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # Filtro las casas cuyo propietario sea igual que el usuario que ha realizado la consulta
+        houses = House.objects.filter(owner=request.user.email)
+
+        # Retorno los ids de las casas
+        ids = []
+        for i in houses:
+            ids.append(i.id_house)
+        if ids:
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+
+        return Response({'success': True, 'msg': "No matches with client preferences"},
+                        status=status.HTTP_204_NO_CONTENT)
