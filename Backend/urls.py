@@ -21,7 +21,7 @@ from rest_framework_simplejwt import views as jwt_views
 from houses.views import CreateHouseView,GetHouseView,GetAllHouseView,UploadImageView,SearchHousesView
 from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswordView, GetProfileView,CheckLoginView
 from rest_framework_simplejwt import views as jwt_views
-
+from trips.views import MakeTripView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
@@ -35,5 +35,7 @@ urlpatterns = [
     path('houses/get-house', houses.views.GetHouseView.as_view(), name='get_house'),
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
     path('houses/search-houses',houses.views.SearchHousesView.as_view(), name='get_all_houses'),
-    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image')
+    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image'),
+    path('trips/reserve', MakeTripView.as_view(), name='get_trip')
+
 ]
