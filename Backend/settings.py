@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'houses',
     'storages',
     'clients',
-    'favorites'
+    'favorites',
+    'trips',
 ]
 
 MIDDLEWARE = [

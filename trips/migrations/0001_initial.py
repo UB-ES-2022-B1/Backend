@@ -16,10 +16,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Favorites',
+            name='Trips',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('timestamp', models.DateField()),
+                ('total_price', models.FloatField(max_length=7)),
+                ('check_in', models.DateField()),
+                ('check_out', models.DateField()),
+                ('guests', models.IntegerField()),
                 ('id_client', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('id_house', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='houses.house')),
             ],

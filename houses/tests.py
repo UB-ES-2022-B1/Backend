@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import House
+from datetime import datetime, timedelta
 
 
 class VivendaTest(APITestCase):
@@ -93,7 +94,7 @@ class VivendaTest(APITestCase):
         "description": "bonica",
         "province": "Girona",
         "country": "España",
-        "town": "Celrà",
+        "town": "Salou",
         "street": "Carrer del Pi 20",
         "base_price": "100",
         "extra_costs": "10",
@@ -129,9 +130,7 @@ class VivendaTest(APITestCase):
         """
         # we will create an account and a house attached to it
 
-        response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 3},
-                                    format='json')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
         self.client.post('http://localhost:8000/accounts/register', self.data_client, format='json')
 
         response = self.client.post('http://127.0.0.1:8000/accounts/login', self.data_login, format='json')
@@ -143,9 +142,7 @@ class VivendaTest(APITestCase):
         self.assertEqual(House.objects.get(owner='mailfalso1@yahoo.com').title, 'casa1')
 
     def test_searchVivienda(self):
-        response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 3},
-                                    format='json')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
         self.client.post('http://localhost:8000/accounts/register', self.data_client, format='json')
 
         response = self.client.post('http://127.0.0.1:8000/accounts/login', self.data_login, format='json')
@@ -161,19 +158,56 @@ class VivendaTest(APITestCase):
         response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house3,
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
 
-        response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 3},
+        data_trip = {"id_house": 1,
+                     "total_price": 190.23,
+                     "check_in": "2022-12-25",
+                     "check_out": "2022-12-29",
+                     "guests": 3
+                     }
+        response = self.client.post('http://127.0.0.1:8000/trips/reserve', data=data_trip,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data_trip = {"id_house": 2,
+                     "total_price": 198,
+                     "check_in": "2022-12-10",
+                     "check_out": "2022-12-13",
+                     "guests": 3
+                     }
+        response = self.client.post('http://127.0.0.1:8000/trips/reserve', data=data_trip,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        search_data = {"town": "sAloU",
+                        "num_people": 5,
+                        "check_in":  "2022-12-25",
+                        "check_out": "2022-12-29"
+                        }
+
+        search_data2 = {"town": "SALOU",
+                        "num_people": 15,
+                        "check_in":  "2022-12-13",
+                        "check_out":"2022-12-15"
+                        }
+        search_data3 = {"town": "sAloU",
+                        "num_people": 5,
+                        "check_in":  "2022-12-13",
+                        "check_out":"2022-12-15"
+                        }
+
+        response = self.client.post('http://localhost:8000/houses/search-houses', search_data,
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['ids'][0], 1)
+        self.assertEqual(response.data['ids'][0], 3)
 
-        response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 15},
+        response = self.client.post('http://localhost:8000/houses/search-houses', search_data2,
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        response = self.client.post('http://localhost:8000/houses/search-houses', {"town": "salou", "num_people": 5},
+        response = self.client.post('http://localhost:8000/houses/search-houses', search_data3,
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['ids']), 1)
+        self.assertEqual(len(response.data['ids']), 2)
 
     def test_get_own_houses(self):
         self.client.post('http://localhost:8000/accounts/register', self.data_client, format='json')
@@ -187,4 +221,41 @@ class VivendaTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.post('http://127.0.0.1:8000/houses/get-own-houses',
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
-        self.assertEqual(len(response.data['ids']), 2)
+        self.assertEqual(len(response.data['ids']), 1)
+
+    def test_delete_house(self):
+        self.client.post('http://localhost:8000/accounts/register', self.data_client, format='json')
+        response = self.client.post('http://127.0.0.1:8000/accounts/login', self.data_login, format='json')
+        token = response.json()['access']
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.data_house2['owner'] = 'other@gmail.com'
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house2,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house3,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 1},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 2},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        data_trip = {"id_house": 3,
+                     "total_price": 198,
+                     "check_in": datetime.date(datetime.now()),
+                     "check_out": datetime.date(datetime.now()) + timedelta(days=3),
+                     "guests": 3
+                     }
+        response = self.client.post('http://127.0.0.1:8000/trips/reserve', data=data_trip,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 3},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
