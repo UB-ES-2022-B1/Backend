@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
 import houses
 
 from rest_framework_simplejwt import views as jwt_views
@@ -25,6 +24,7 @@ from clients.views import RegistrationView, LoginView, LogoutView, ChangePasswor
 from rest_framework_simplejwt import views as jwt_views
 from favorites.views import AddToFavorites,GetOwnFavorites
 
+from trips.views import MakeTripView
 urlpatterns = [
     path('accounts/register', RegistrationView.as_view(), name='register'),
     path('accounts/login', LoginView.as_view(), name='register'),
@@ -40,8 +40,10 @@ urlpatterns = [
     path('houses/get-houses', houses.views.GetAllHouseView.as_view(), name='get_all_houses'),
     path('houses/search-houses',houses.views.SearchHousesView.as_view(), name='get_all_houses'),
     path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image'),
+    path('houses/upload-image', houses.views.UploadImageView.as_view(), name='upload_image'),
     path('houses/get-own-houses', houses.views.GetOwnHouses.as_view(), name='Get_own_houses'),
     path('favorites/add-favorites', AddToFavorites.as_view(), name='add_house_to_favorites'),
     path('favorites/get-favorites', GetOwnFavorites.as_view(), name='Get_own_favorites'),
+    path('trips/reserve', MakeTripView.as_view(), name='get_trip')
 
 ]
