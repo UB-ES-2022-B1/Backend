@@ -153,3 +153,26 @@ class GetOwnHouses(APIView):
 
         return Response({'success': True, 'msg': "No matches with client preferences"},
                         status=status.HTTP_204_NO_CONTENT)
+
+
+class DeleteOwnHouse(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            house = House.objects.get(id_house=request.data['id_house'])
+            if house.owner == request.user.email:
+                trips = Trips.objects.filter(id_house_id=request.data['id_house'], check_in__gte=datetime.date(datetime.now()))
+                if len(trips) == 0:
+                    for trip in trips:
+                        trip.delete()
+                    house.delete()
+                    return Response({'success': True, 'msg': "House deleted"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'success': False, 'msg': "House has future trips"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'success': False, 'msg': "You are not the owner of this house"},
+                                status=status.HTTP_401_UNAUTHORIZED)
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
