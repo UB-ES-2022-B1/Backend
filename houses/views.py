@@ -111,7 +111,7 @@ class SearchHousesView(APIView):
         try:
             check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
             today = datetime.date(datetime.now())
-            if check_in_date > today:
+            if check_in_date >= today:
                 houses = House.objects.filter(town__contains=request.data["town"],
                                               num_people__gte=request.data["num_people"])
                 trips = list()
@@ -125,7 +125,10 @@ class SearchHousesView(APIView):
                 if len(trips) > 0 and len(houses) > 0:
                     for trip in trips:
                         houses = houses.exclude(id_house=trip)
-                ids = [i.id_house for i in houses]
+                ids = list()
+                for house in houses:
+                    ids.append(house.id_house)
+
                 if len(ids) > 0:
                     return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
 
