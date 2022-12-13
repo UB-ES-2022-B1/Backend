@@ -1,16 +1,14 @@
-from django.middleware import csrf
-from django.shortcuts import render
+from django.core.exceptions import ObjectDoesNotExist
+
 
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.template.backends import django
+
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from clients.utils import get_tokens_for_user
+from houses.models import House
 from .models import Client
 from .serializers import RegistrationSerializer, PasswordChangeSerializer
 
@@ -65,7 +63,7 @@ class ChangePasswordView(APIView):
         serializer.is_valid(raise_exception=True)
         request.user.set_password(serializer.validated_data['new_password'])
         request.user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'success': True, 'msg': 'Password changed!'}, status=status.HTTP_200_OK)
 
 
 class GetProfileView(APIView):
@@ -85,3 +83,30 @@ class CheckLoginView(APIView):
     def get(self):
         return Response({'success': True}, status=status.HTTP_200_OK)
 
+
+class UpdateProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            # Primero actualizamos los campos del usuario en base a los recibidos
+            # en la función
+            client = Client.objects.filter(email=request.user.email)
+            client.update(**request.data)
+            # Si el campo email está presente, cambiamos el atributo owner de
+            # las casas
+            if "email" in request.data:
+                client = Client.objects.get(email=request.data["email"])
+                houses = House.objects.filter(owner=request.user.email)
+                for h in houses:
+                    h.owner = request.data["email"]
+                    h.save()
+
+            else:
+                # Retornamos la información actualizada en la base de datos.
+                client = Client.objects.get(email=request.user.email)
+            return Response({'success': True, 'msg': client.toJson()}, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': 'User does not exist in database'},
+                            status=status.HTTP_404_NOT_FOUND)
