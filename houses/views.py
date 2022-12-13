@@ -162,7 +162,8 @@ class DeleteOwnHouse(APIView):
         try:
             house = House.objects.get(id_house=request.data['id_house'])
             if house.owner == request.user.email:
-                trips = Trips.objects.filter(id_house_id=request.data['id_house'], check_in__gte=datetime.date(datetime.now()))
+                trips = Trips.objects.filter(id_house_id=request.data['id_house'],
+                                             check_in__gte=datetime.date(datetime.now()))
                 if len(trips) == 0:
                     for trip in trips:
                         trip.delete()
@@ -174,5 +175,19 @@ class DeleteOwnHouse(APIView):
             else:
                 return Response({'success': False, 'msg': "You are not the owner of this house"},
                                 status=status.HTTP_401_UNAUTHORIZED)
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
+
+class GetHouseTripsView(APIView):
+    permission_classes = [AllowAny, ]
+
+    def post(self, request):
+        try:
+            house = House.objects.get(id_house=request.data['id_house'])
+            trips = Trips.objects.filter(id_house_id=request.data['id_house'], check_in__gte=datetime.date(datetime.now()))
+            ids = []
+            for trip in trips:
+                ids.append({trip.check_out,trip.check_in})
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
