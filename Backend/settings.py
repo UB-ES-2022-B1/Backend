@@ -94,6 +94,9 @@ WSGI_APPLICATION = 'Backend.wsgi.application'
 # DBHOST is only the server name, not the full URL
 hostname = os.environ['DBHOST']
 
+# DBHOST is only the server name, not the full URL
+hostname = os.environ['DBHOST']
+
 # Configure Postgres database; the full username for PostgreSQL flexible server is
 # username (not @sever-name).
 DATABASES = {

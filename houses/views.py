@@ -103,13 +103,13 @@ class GetAllHouseView(APIView):
             return Response({'success': False, 'msg': "Wrong page id or connection error with database"},
                             status=status.HTTP_400_BAD_REQUEST)
 
-
 class SearchHousesView(APIView):
     permission_classes = [AllowAny, ]
 
     def post(self, request):
         try:
             check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
+            check_out_date = datetime.date(datetime.strptime(request.data["check_out"], "%Y-%m-%d"))
             today = datetime.date(datetime.now())
             if check_in_date >= today:
                 houses = House.objects.filter(town__contains=request.data["town"],
@@ -119,7 +119,7 @@ class SearchHousesView(APIView):
                 for house in houses:
                     aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
                     for i in aux:
-                        if i.check_in <= check_in_date <= i.check_out:
+                        if i.check_in <= check_in_date <= i.check_out or (i.check_in <= check_out_date <= i.check_out):
                             trips.append(i.id_house_id)
 
                 if len(trips) > 0 and len(houses) > 0:
@@ -137,7 +137,6 @@ class SearchHousesView(APIView):
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
-
 
 # Función para devolver las viviendas registradas de un propietario.
 class GetOwnHouses(APIView):
@@ -194,3 +193,4 @@ class GetHouseTripsView(APIView):
             return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
+
