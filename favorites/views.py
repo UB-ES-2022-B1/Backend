@@ -49,17 +49,12 @@ class GetOwnFavorites(APIView):
 
     def get(self, request):
         try:
+
             client = Client.objects.get(email=request.user.email)
-            favs = Favorites.objects.filter(id_client=client.pk)
-            ids = []
-            for i in favs:
-                ids.append(i.id_house_id)
-            if ids:
-                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
-
-            return Response({'success': True, 'msg': "User does not have favorites houses"},
-                            status=status.HTTP_204_NO_CONTENT)
-
+            favorites = Favorites.objects.filter(id_client=client.pk)
+            serializer = FavoritesSerializer(favorites, many=True)
+            return Response({'success': True, 'favorites': serializer.data},
+                            status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
-            return Response({'success': False, 'msg': 'Error with database'},
+            return Response({'success': False, 'msg': 'Incorrect house id!'},
                             status=status.HTTP_400_BAD_REQUEST)
