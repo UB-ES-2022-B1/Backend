@@ -40,7 +40,7 @@ class UploadImageView(APIView):
             House.objects.get(id_house=request.POST['id_house'])
             if len(request.FILES.getlist("files")) > 0:
                 for file in request.FILES.getlist("files"):
-                    uuid = datetime.datetime.now()
+                    uuid = datetime.now()
                     file_upload_name = str(uuid) + file.name
                     blob_service_client = BlobServiceClient.from_connection_string(conn_str=os.environ['STORAGE'])
 
@@ -103,15 +103,15 @@ class GetAllHouseView(APIView):
             return Response({'success': False, 'msg': "Wrong page id or connection error with database"},
                             status=status.HTTP_400_BAD_REQUEST)
 
-
 class SearchHousesView(APIView):
     permission_classes = [AllowAny, ]
 
     def post(self, request):
         try:
             check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
+            check_out_date = datetime.date(datetime.strptime(request.data["check_out"], "%Y-%m-%d"))
             today = datetime.date(datetime.now())
-            if check_in_date > today:
+            if check_in_date >= today:
                 houses = House.objects.filter(town__contains=request.data["town"],
                                               num_people__gte=request.data["num_people"])
                 trips = list()
@@ -119,13 +119,16 @@ class SearchHousesView(APIView):
                 for house in houses:
                     aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
                     for i in aux:
-                        if i.check_in <= check_in_date <= i.check_out:
+                        if i.check_in <= check_in_date <= i.check_out or (i.check_in <= check_out_date <= i.check_out):
                             trips.append(i.id_house_id)
 
                 if len(trips) > 0 and len(houses) > 0:
                     for trip in trips:
                         houses = houses.exclude(id_house=trip)
-                ids = [i.id_house for i in houses]
+                ids = list()
+                for house in houses:
+                    ids.append(house.id_house)
+
                 if len(ids) > 0:
                     return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
 
@@ -135,12 +138,11 @@ class SearchHousesView(APIView):
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
 
-
 # Función para devolver las viviendas registradas de un propietario.
 class GetOwnHouses(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         # Filtro las casas cuyo propietario sea igual que el usuario que ha realizado la consulta
         houses = House.objects.filter(owner=request.user.email)
 
@@ -153,3 +155,27 @@ class GetOwnHouses(APIView):
 
         return Response({'success': True, 'msg': "No matches with client preferences"},
                         status=status.HTTP_204_NO_CONTENT)
+
+
+class DeleteOwnHouse(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            house = House.objects.get(id_house=request.data['id_house'])
+            if house.owner == request.user.email:
+                trips = Trips.objects.filter(id_house_id=request.data['id_house'],
+                                             check_in__gte=datetime.date(datetime.now()))
+                if len(trips) == 0:
+                    for trip in trips:
+                        trip.delete()
+                    house.delete()
+                    return Response({'success': True, 'msg': "House deleted"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'success': False, 'msg': "House has future trips"},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'success': False, 'msg': "You are not the owner of this house"},
+                                status=status.HTTP_401_UNAUTHORIZED)
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
