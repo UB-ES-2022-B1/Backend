@@ -103,40 +103,48 @@ class GetAllHouseView(APIView):
             return Response({'success': False, 'msg': "Wrong page id or connection error with database"},
                             status=status.HTTP_400_BAD_REQUEST)
 
+
 class SearchHousesView(APIView):
     permission_classes = [AllowAny, ]
 
     def post(self, request):
         try:
-            check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
-            check_out_date = datetime.date(datetime.strptime(request.data["check_out"], "%Y-%m-%d"))
-            today = datetime.date(datetime.now())
-            if check_in_date >= today:
+            houses = None
+            if "town" in request.data.keys():
                 houses = House.objects.filter(town__contains=request.data["town"],
                                               num_people__gte=request.data["num_people"])
-                trips = list()
+            else:
+                houses = House.objects.filter(num_people__gte=request.data["num_people"])
+            if "check_in" in request.data.keys() and "check_out" in request.data.keys():
+                check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
+                check_out_date = datetime.date(datetime.strptime(request.data["check_out"], "%Y-%m-%d"))
+                today = datetime.date(datetime.now())
+                if check_in_date >= today:
+                    trips = list()
 
-                for house in houses:
-                    aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
-                    for i in aux:
-                        if i.check_in <= check_in_date <= i.check_out or (i.check_in <= check_out_date <= i.check_out):
-                            trips.append(i.id_house_id)
+                    for house in houses:
+                        aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
+                        for i in aux:
+                            if i.check_in <= check_in_date <= i.check_out or (
+                                    i.check_in <= check_out_date <= i.check_out):
+                                trips.append(i.id_house_id)
 
-                if len(trips) > 0 and len(houses) > 0:
-                    for trip in trips:
-                        houses = houses.exclude(id_house=trip)
-                ids = list()
-                for house in houses:
-                    ids.append(house.id_house)
+                    if len(trips) > 0 and len(houses) > 0:
+                        for trip in trips:
+                            houses = houses.exclude(id_house=trip)
+            ids = list()
+            for house in houses:
+                ids.append(house.id_house)
 
-                if len(ids) > 0:
-                    return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+            if len(ids) > 0:
+                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
 
             return Response({'success': True, 'msg': "No matches with client preferences"},
                             status=status.HTTP_204_NO_CONTENT)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': "Connexion error with Database"},
                             status=status.HTTP_400_BAD_REQUEST)
+
 
 # Función para devolver las viviendas registradas de un propietario.
 class GetOwnHouses(APIView):
