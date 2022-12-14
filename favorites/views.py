@@ -22,19 +22,23 @@ class AddToFavorites(APIView):
             house = House.objects.get(id=request.data["id_house"])
             client = Client.objects.get(email=request.user.email)
 
-            # Campos a almacenar en la base de datos.
-            fields = dict()
-            fields["id_client"] = client.pk
-            fields["id_house"] = house.pk
-            fields["timestamp"] = datetime.date.today()
-
-            serializer = FavoritesSerializer(data=fields)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'success': True, 'msg': 'Added Success'},
+            if request.data["toAdd"] == True:
+                # Campos a almacenar en la base de datos.
+                fields = dict()
+                fields["id_client"] = client.pk
+                fields["id_house"] = house.pk
+                fields["timestamp"] = datetime.date.today()
+                serializer = FavoritesSerializer(data=fields)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({'success': True, 'msg': 'Added to favorites'},
+                                    status=status.HTTP_201_CREATED)
+                return Response({'success': False, 'msg': 'Error with database!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            else:
+                Favorites.objects.filter(id_client=client.pk, id_house=house.pk).delete()
+                return Response({'success': True, 'msg': 'Removed from favorites'},
                                 status=status.HTTP_201_CREATED)
-            return Response({'success': False, 'msg': 'Error with database!'},
-                            status=status.HTTP_400_BAD_REQUEST)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': 'Incorrect house id!'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -45,17 +49,16 @@ class GetOwnFavorites(APIView):
 
     def get(self, request):
         try:
+
             client = Client.objects.get(email=request.user.email)
-            favs = Favorites.objects.filter(id_client=client.pk)
-            ids = []
-            for i in favs:
-                ids.append(i.id_house_id)
-            if ids:
-                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+            favorites = Favorites.objects.filter(id_client=client.pk)
+            serializer = FavoritesSerializer(favorites, many=True)
+            favs = list()
+            for fav in serializer.data:
+                favs.append(fav["id_house"])
 
-            return Response({'success': True, 'msg': "User does not have favorites houses"},
-                            status=status.HTTP_204_NO_CONTENT)
-
+            return Response({'success': True, 'favorites': favs},
+                            status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
-            return Response({'success': False, 'msg': 'Error with database'},
+            return Response({'success': False, 'msg': 'Incorrect house id!'},
                             status=status.HTTP_400_BAD_REQUEST)

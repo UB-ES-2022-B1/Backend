@@ -40,7 +40,7 @@ class UploadImageView(APIView):
             House.objects.get(id_house=request.POST['id_house'])
             if len(request.FILES.getlist("files")) > 0:
                 for file in request.FILES.getlist("files"):
-                    uuid = datetime.datetime.now()
+                    uuid = datetime.now()
                     file_upload_name = str(uuid) + file.name
                     blob_service_client = BlobServiceClient.from_connection_string(conn_str=os.environ['STORAGE'])
 
@@ -109,25 +109,35 @@ class SearchHousesView(APIView):
 
     def post(self, request):
         try:
-            check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
-            today = datetime.date(datetime.now())
-            if check_in_date > today:
+            houses = None
+            if "town" in request.data.keys():
                 houses = House.objects.filter(town__contains=request.data["town"],
                                               num_people__gte=request.data["num_people"])
-                trips = list()
+            else:
+                houses = House.objects.filter(num_people__gte=request.data["num_people"])
+            if "check_in" in request.data.keys() and "check_out" in request.data.keys():
+                check_in_date = datetime.date(datetime.strptime(request.data["check_in"], "%Y-%m-%d"))
+                check_out_date = datetime.date(datetime.strptime(request.data["check_out"], "%Y-%m-%d"))
+                today = datetime.date(datetime.now())
+                if check_in_date >= today:
+                    trips = list()
 
-                for house in houses:
-                    aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
-                    for i in aux:
-                        if i.check_in <= check_in_date <= i.check_out:
-                            trips.append(i.id_house_id)
+                    for house in houses:
+                        aux = Trips.objects.filter(id_house_id=house.id_house, check_in__gte=today)
+                        for i in aux:
+                            if i.check_in <= check_in_date <= i.check_out or (
+                                    i.check_in <= check_out_date <= i.check_out):
+                                trips.append(i.id_house_id)
 
-                if len(trips) > 0 and len(houses) > 0:
-                    for trip in trips:
-                        houses = houses.exclude(id_house=trip)
-                ids = [i.id_house for i in houses]
-                if len(ids) > 0:
-                    return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+                    if len(trips) > 0 and len(houses) > 0:
+                        for trip in trips:
+                            houses = houses.exclude(id_house=trip)
+            ids = list()
+            for house in houses:
+                ids.append(house.id_house)
+
+            if len(ids) > 0:
+                return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
 
             return Response({'success': True, 'msg': "No matches with client preferences"},
                             status=status.HTTP_204_NO_CONTENT)
@@ -140,7 +150,7 @@ class SearchHousesView(APIView):
 class GetOwnHouses(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         # Filtro las casas cuyo propietario sea igual que el usuario que ha realizado la consulta
         houses = House.objects.filter(owner=request.user.email)
 
@@ -162,7 +172,8 @@ class DeleteOwnHouse(APIView):
         try:
             house = House.objects.get(id_house=request.data['id_house'])
             if house.owner == request.user.email:
-                trips = Trips.objects.filter(id_house_id=request.data['id_house'], check_in__gte=datetime.date(datetime.now()))
+                trips = Trips.objects.filter(id_house_id=request.data['id_house'],
+                                             check_in__gte=datetime.date(datetime.now()))
                 if len(trips) == 0:
                     for trip in trips:
                         trip.delete()
@@ -176,3 +187,18 @@ class DeleteOwnHouse(APIView):
                                 status=status.HTTP_401_UNAUTHORIZED)
         except ObjectDoesNotExist:
             return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
+
+class GetHouseTripsView(APIView):
+    permission_classes = [AllowAny, ]
+
+    def post(self, request):
+        try:
+            house = House.objects.get(id_house=request.data['id_house'])
+            trips = Trips.objects.filter(id_house_id=request.data['id_house'], check_in__gte=datetime.date(datetime.now()))
+            ids = []
+            for trip in trips:
+                ids.append({trip.check_out,trip.check_in})
+            return Response({'success': True, 'ids': ids}, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({'success': False, 'msg': "Wrong house id"}, status=status.HTTP_404_NOT_FOUND)
+
