@@ -3,6 +3,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import House
+from datetime import datetime, timedelta
 
 
 class VivendaTest(APITestCase):
@@ -220,4 +221,41 @@ class VivendaTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.post('http://127.0.0.1:8000/houses/get-own-houses',
                                     **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
-        self.assertEqual(len(response.data['ids']), 2)
+        self.assertEqual(len(response.data['ids']), 1)
+
+    def test_delete_house(self):
+        self.client.post('http://localhost:8000/accounts/register', self.data_client, format='json')
+        response = self.client.post('http://127.0.0.1:8000/accounts/login', self.data_login, format='json')
+        token = response.json()['access']
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.data_house2['owner'] = 'other@gmail.com'
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house2,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://127.0.0.1:8000/houses/register', data=self.data_house3,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 1},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 2},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        data_trip = {"id_house": 3,
+                     "total_price": 198,
+                     "check_in": datetime.date(datetime.now()),
+                     "check_out": datetime.date(datetime.now()) + timedelta(days=3),
+                     "guests": 3
+                     }
+        response = self.client.post('http://127.0.0.1:8000/trips/reserve', data=data_trip,
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post('http://localhost:8000/houses/delete-house', data={"id_house": 3},
+                                    **{'HTTP_AUTHORIZATION': f'Bearer {token}'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
